@@ -4,5 +4,5 @@ import './index.css';
 import Hello from './components/hello';
 // import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<Hello />, document.getElementById('root'));
+ReactDOM.render(<Hello firstName={'Jerr'} lastName={'May'} />, document.getElementById('root'));
 // registerServiceWorker();
