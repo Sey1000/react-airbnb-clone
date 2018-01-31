@@ -9,6 +9,9 @@ class App extends Component {
     super(props);
     this.state = {
       flats: [],
+      allFlats: [],
+      selectedFlat: null,
+      search: "",
     }
   }
 
@@ -17,25 +20,43 @@ class App extends Component {
       .then(response => response.json())
       .then((data) => {
         this.setState({
-          flats: data
+          flats: data,
+          allFlats: data,
         })
       })
   }
 
+  selectFlat = (flat) => {
+    console.log(flat);
+    this.setState({
+      selectedFlat: flat
+    });
+  };
+
+  handleSearch = (e) => {
+    this.setState({
+      search: e.target.value,
+      flats: this.state.allFlats.filter((flat) => new RegExp(e.target.value, 'i').exec(flat.name)),
+    });
+  };
+
   render() {
-    const center = {
-      lat: 48.8566,
-      lng: 2.3522
-    };
+    const center = this.state.selectedFlat ?
+      { lat: this.state.selectedFlat.lat, lng: this.state.selectedFlat.lng} :
+      { lat: 48.8566, lng: 2.3522};
 
     return (
       <div className="app">
         <div className="main">
           <div className="search">
+            <input type="text" placeholder="Search.." value={this.state.search} onChange={this.handleSearch}/>
           </div>
           <div className="flats">
-            {this.state.flats.map((flat) => {
-              return <Flat flat={flat} />
+            {this.state.flats.map((flat, i) => {
+              return <Flat
+                flat={flat}
+                key={i}
+                selectFlat={this.selectFlat} />
             })}
           </div>
         </div>
@@ -44,8 +65,8 @@ class App extends Component {
             center={center}
             zoom={11}
           >
-            {this.state.flats.map((flat) => {
-              return <Marker lat={flat.lat} lng={flat.lng} text={flat.price} />
+            {this.state.flats.map((flat, i) => {
+              return <Marker lat={flat.lat} lng={flat.lng} text={flat.price} key={i} selected={flat === this.state.selectedFlat} />
             })}
           </GoogleMapReact>
         </div>
